@@ -6,3 +6,8 @@
 
 # Obsidian
 wiki/.obsidian/workspace.json
+
+# Dashboard
+.env
+dashboard/.venv/
+dashboard/__pycache__/

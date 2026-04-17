@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kenny-Wiki 查詢介面</title>
+  <link rel="stylesheet" href="/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- 側邊欄 -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">📚 Kenny-Wiki</div>
+        <div id="provider-badge" class="provider-badge">載入中…</div>
+      </div>
+      <div class="sidebar-section-label">Wiki 文章</div>
+      <nav id="article-list" class="article-list"></nav>
+    </aside>
+
+    <!-- 主內容 -->
+    <main class="main">
+      <div class="chat-header">
+        <span class="chat-title">AI 知識庫查詢</span>
+        <button id="clear-btn" class="clear-btn" title="清除對話">清除對話</button>
+      </div>
+
+      <div id="messages" class="messages">
+        <div class="message ai">
+          <div class="bubble">
+            你好！我是 Kenny-Wiki 的 AI 助理。<br>
+            請輸入問題，我會根據知識庫內容回答你。<br><br>
+            也可以點擊左側文章直接閱讀。
+          </div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <textarea
+          id="input"
+          class="input-box"
+          placeholder="輸入問題，按 Enter 送出（Shift+Enter 換行）…"
+          rows="1"
+        ></textarea>
+        <button id="send-btn" class="send-btn">送出</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- 文章 Modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-box">
+      <div class="modal-header">
+        <span id="modal-title" class="modal-title"></span>
+        <button id="modal-close" class="modal-close">✕</button>
+      </div>
+      <div id="modal-body" class="modal-body markdown-body"></div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
