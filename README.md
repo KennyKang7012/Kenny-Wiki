@@ -93,6 +93,28 @@ raw/
 
 > ⚠️ `raw/` 裡的原始檔案**永遠不要修改或刪除**，它是知識庫的唯一資料來源。
 
+#### 支援的檔案格式
+
+| 格式 | 說明 |
+|------|------|
+| `.pdf` | 直接支援（已安裝 poppler）|
+| `.md` | Markdown，ingest 品質最佳 |
+| `.txt` | 純文字 |
+| `.html` | 網頁原始碼 |
+| `.csv` | 逗號分隔資料 |
+| `.json` / `.yaml` | 結構化資料 |
+| `.py` `.js` 等 | 任何純文字程式碼檔 |
+| `.png` `.jpg` `.webp` | 圖片（Claude 多模態讀取）|
+| `.ipynb` | Jupyter Notebook |
+
+#### ⚠️ 不支援格式，放入前請先轉換
+
+| 格式 | 轉換方式 |
+|------|---------|
+| `.pptx` | PowerPoint → 另存新檔 → PDF |
+| `.docx` | Word → 另存新檔 → PDF，或複製貼上成 `.txt` |
+| `.xlsx` | Excel → 另存新檔 → `.csv` |
+
 ### Step 2：執行 ingest
 
 在 Claude Code 輸入：
