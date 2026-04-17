@@ -4,8 +4,8 @@
 # Claude Code
 .claude/settings.local.json
 
-# Obsidian
-wiki/.obsidian/workspace.json
+# Obsidian（設定檔由 Obsidian 自動修改，不納入版控）
+wiki/.obsidian/
 
 # Dashboard
 .env
