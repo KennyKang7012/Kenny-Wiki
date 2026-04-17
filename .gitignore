@@ -1,0 +1,8 @@
+# macOS
+.DS_Store
+
+# Claude Code
+.claude/settings.local.json
+
+# Obsidian
+wiki/.obsidian/workspace.json
