@@ -56,7 +56,7 @@ async function loadArticles() {
 }
 
 // ── Article modal ─────────────────────────────────────────────
-async function openArticle(path, title) {
+window.openArticle = async function openArticle(path, title) {
   modalTitle.textContent = title;
   modalBody.innerHTML = '<div style="color:#94a3b8;padding:20px 0">載入中…</div>';
   modal.classList.remove('hidden');
@@ -74,10 +74,17 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classL
 function appendMessage(role, html, isRaw = false) {
   const div = document.createElement('div');
   div.className = `message ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  avatar.textContent = role === 'user' ? '🧑' : '🤖';
+
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
   if (isRaw) bubble.innerHTML = html;
   else bubble.textContent = html;
+
+  div.appendChild(avatar);
   div.appendChild(bubble);
   messagesEl.appendChild(div);
   messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -101,6 +108,7 @@ async function sendMessage() {
   aiBubble.innerHTML = '';
 
   let fullText = '';
+  let sourcePaths = [];
 
   try {
     const res = await fetch('/api/chat', {
@@ -126,15 +134,30 @@ async function sendMessage() {
         const data = line.slice(6);
         if (data === '[DONE]') break;
         try {
-          const { content } = JSON.parse(data);
-          fullText += content;
-          aiBubble.innerHTML = marked.parse(fullText);
-          messagesEl.scrollTop = messagesEl.scrollHeight;
+          const parsed = JSON.parse(data);
+          if (parsed.sources) {
+            sourcePaths = parsed.sources;
+          } else if (parsed.content) {
+            fullText += parsed.content;
+            aiBubble.innerHTML = marked.parse(fullText);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+          }
         } catch { /* ignore parse errors */ }
       }
     }
   } catch (err) {
     aiBubble.innerHTML = `<span style="color:#ef4444">連線錯誤：${err.message}</span>`;
+  }
+
+  // 顯示來源標籤
+  if (sourcePaths.length > 0) {
+    const sourceEl = document.createElement('div');
+    sourceEl.className = 'source-tags';
+    sourceEl.innerHTML = '📄 參考來源：' + sourcePaths.map(p => {
+      const title = p.split('/').pop().replace('.md', '').replace(/-/g, ' ');
+      return `<button class="source-tag" onclick="openArticle('${p}', '${title}')">${title}</button>`;
+    }).join('');
+    aiBubble.appendChild(sourceEl);
   }
 
   aiBubble.classList.remove('cursor');
@@ -147,7 +170,7 @@ async function sendMessage() {
 
 // ── Input behaviour ───────────────────────────────────────────
 inputEl.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) {
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
     e.preventDefault();
     sendMessage();
   }

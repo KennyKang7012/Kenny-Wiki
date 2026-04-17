@@ -13,6 +13,8 @@ load_dotenv(Path(__file__).parent.parent / ".env")
 
 WIKI_DIR = Path(__file__).parent.parent / "wiki"
 PROVIDER = os.getenv("LLM_PROVIDER", "ollama").lower()
+MAX_ARTICLE_CHARS = int(os.getenv("MAX_ARTICLE_CHARS", "800"))
+MAX_CONTEXT_ARTICLES = int(os.getenv("MAX_CONTEXT_ARTICLES", "1"))
 
 app = FastAPI()
 
@@ -27,16 +29,25 @@ def load_wiki_articles() -> dict[str, str]:
     return articles
 
 
-def find_relevant(query: str, articles: dict[str, str], top_n: int = 4) -> list[str]:
+def find_relevant(query: str, articles: dict[str, str]) -> list[tuple[str, str]]:
     tokens = set(query.lower().split())
     scores = {p: sum(1 for t in tokens if t in c.lower()) for p, c in articles.items()}
     ranked = sorted(scores, key=lambda p: scores[p], reverse=True)
-    return [articles[p] for p in ranked[:top_n] if scores[p] > 0]
+    return [(p, articles[p][:MAX_ARTICLE_CHARS]) for p in ranked[:MAX_CONTEXT_ARTICLES] if scores[p] > 0]
 
 
 class ChatRequest(BaseModel):
     messages: list[dict]
     query: str
+
+
+async def safe_stream(gen: AsyncGenerator[str, None]) -> AsyncGenerator[str, None]:
+    try:
+        async for chunk in gen:
+            yield chunk
+    except Exception as e:
+        yield f"data: {json.dumps({'content': f'\\n\\n⚠️ 錯誤：{e}'})}\n\n"
+        yield "data: [DONE]\n\n"
 
 
 async def stream_openai(
@@ -68,15 +79,11 @@ async def stream_anthropic(
     yield "data: [DONE]\n\n"
 
 
-def build_system(relevant: list[str]) -> str:
+def build_system(relevant: list[tuple[str, str]]) -> str:
     if not relevant:
         return "你是 Kenny-Wiki 的知識庫助理。請使用繁體中文回答問題。"
-    context = "\n\n---\n\n".join(relevant)
-    return f"""你是 Kenny-Wiki 的知識庫助理。請根據以下 Wiki 文章內容回答問題。
-如果問題超出知識庫範圍，請誠實告知。請使用繁體中文回答，回答要簡潔清晰。
-
-Wiki 知識庫內容：
-{context}"""
+    context = "\n\n---\n\n".join(content for _, content in relevant)
+    return f"你是 Kenny-Wiki 的知識庫助理。根據以下內容回答，請用繁體中文簡潔回覆。\n\n{context}"
 
 
 @app.get("/api/articles")
@@ -112,10 +119,18 @@ def get_provider():
     return {"provider": PROVIDER, "model": model_map.get(PROVIDER, "unknown")}
 
 
+async def prepend_sources(source_paths: list[str], gen: AsyncGenerator[str, None]) -> AsyncGenerator[str, None]:
+    if source_paths:
+        yield f"data: {json.dumps({'sources': source_paths})}\n\n"
+    async for chunk in gen:
+        yield chunk
+
+
 @app.post("/api/chat")
 async def chat(req: ChatRequest):
     articles = load_wiki_articles()
     relevant = find_relevant(req.query, articles)
+    source_paths = [p for p, _ in relevant]
     system = build_system(relevant)
 
     if PROVIDER == "ollama":
@@ -151,7 +166,7 @@ async def chat(req: ChatRequest):
             yield "data: [DONE]\n\n"
         gen = err()
 
-    return StreamingResponse(gen, media_type="text/event-stream")
+    return StreamingResponse(prepend_sources(source_paths, safe_stream(gen)), media_type="text/event-stream")
 
 
 app.mount(
