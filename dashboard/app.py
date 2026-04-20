@@ -60,6 +60,8 @@ async def stream_openai(
         model=model, messages=full_messages, stream=True
     )
     async for chunk in stream:
+        if not chunk.choices:
+            continue
         delta = chunk.choices[0].delta.content
         if delta:
             yield f"data: {json.dumps({'content': delta})}\n\n"
@@ -115,6 +117,7 @@ def get_provider():
         "openai": os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
         "gemini": os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
         "anthropic": os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6"),
+        "nvidia": os.getenv("NVIDIA_MODEL", "minimaxai/minimax-m2.7"),
     }
     return {"provider": PROVIDER, "model": model_map.get(PROVIDER, "unknown")}
 
@@ -158,6 +161,13 @@ async def chat(req: ChatRequest):
         gen = stream_anthropic(
             api_key=os.getenv("ANTHROPIC_API_KEY", ""),
             model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6"),
+            system=system, messages=req.messages,
+        )
+    elif PROVIDER == "nvidia":
+        gen = stream_openai(
+            base_url="https://integrate.api.nvidia.com/v1",
+            api_key=os.getenv("NVIDIA_API_KEY", ""),
+            model=os.getenv("NVIDIA_MODEL", "minimaxai/minimax-m2.7"),
             system=system, messages=req.messages,
         )
     else:
