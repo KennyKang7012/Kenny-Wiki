@@ -13,6 +13,8 @@ Claude 及相關 AI 工具的實際操作指南，從入門到進階部署。
 | [Firecrawl 整合](工具使用/Firecrawl-整合.md) | 解決 Claude Code 遇到 JS 動態渲染和 403 Error 抓不到網站的問題 | 2026-04-17 |
 | [Hermes Agent](工具使用/Hermes-Agent.md) | 開源 AI Agent，VPS 部署 + Telegram 控制，支援 20+ 模型供應商 | 2026-04-17 |
 | [OpenClaw Discord 部署](工具使用/OpenClaw-Discord部署.md) | 多 Agent 系統部署到 Discord，每個頻道對應一個專屬 AI Agent | 2026-04-17 |
+| [Claude Routines](工具使用/Claude-Routines.md) | 讓 Claude 定時自動執行任務的功能，支援排程、API 觸發、GitHub Event 三種觸發方式 | 2026-04-22 |
+| [Claude Skills 完整開發指南](工具使用/Claude-Skills-完整開發指南.md) | Anthropic 官方完整 Skill 開發指南，涵蓋規格、測試、發佈全流程 | 2026-04-22 |
 
 ## 學習筆記
 

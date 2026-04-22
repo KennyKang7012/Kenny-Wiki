@@ -56,6 +56,8 @@ Claude Code 是直接運行於 Terminal 的進階 AI 程式助手，提供 CLAUD
 ## 延伸閱讀
 - [[CLAUDE-md-入門指南]]
 - [[Claude-Code-Skills]]
+- [[Claude-Skills-完整開發指南]]
+- [[Claude-Routines]]
 - [[Claude-模型方案比較]]
 
 ## 來源

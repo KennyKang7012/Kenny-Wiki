@@ -61,6 +61,7 @@ Step 3 存檔
 ## 延伸閱讀
 - [[CLAUDE-md-入門指南]]
 - [[Claude-Code-進階功能]]
+- [[Claude-Skills-完整開發指南]]
 
 ## 來源
 - raw/Claude Code Skills：用這 3 層架構，讓 AI 真正幫你工作_Resource.pdf

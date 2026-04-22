@@ -1,5 +1,20 @@
 # Wiki Log
 
+## [2026-04-22] ingest | Claude Routines + Skills 完整開發指南
+- 新增：wiki/工具使用/Claude-Routines.md
+- 新增：wiki/工具使用/Claude-Skills-完整開發指南.md
+- Updated: wiki/工具使用/Claude-Code-Skills.md
+- Updated: wiki/學習筆記/Claude-Code-進階功能.md
+
+來源 PDF：
+- Hei.ai_claude_routines_新功能：讓_ai_每天自動幫你做事.pdf
+- The-Complete-Guide-to-Building-Skill-for-Claude.pdf
+- The-Complete-Guide-to-Building-Skill-for-Claude.zh-tw.pdf
+
+建立的 raw 摘要檔：
+- raw/claude-code/claude-routines-自動化任務.md
+- raw/claude-code/complete-guide-building-skills.md
+
 ## [2026-04-17] ingest | 初次建置：7 份 PDF 資料轉為 9 篇 Wiki 文章
 
 來源 PDF（raw/）：
